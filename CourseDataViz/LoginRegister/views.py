@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User,Group,auth
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 
 # Create your views here.
@@ -14,13 +15,19 @@ def login(request):
     else:
         username = request.POST['username']
         password = request.POST['password']
-        user = auth.authenticate(username=username,password=password)
+        if (username is not None and password is not None):
+            
+            user = auth.authenticate(username=username,password=password)
 
-        if (user is not None):
-            auth.login(request,user)
-            return redirect('/home')       
+            if (user is not None):
+                auth.login(request,user)
+                return redirect('/home')       
+            else:
+                messages.error(request, "incorrect username or password!!!")
+                return redirect('/login')
         else:
-            return HttpResponse("Invalid login credentials")
+            messages.error(request, "All fields are mandatory")
+            return redirect('/login')
     
 def register(request):
     if request.method == 'GET':
@@ -45,3 +52,6 @@ def logout(request):
 @login_required(login_url='/getLoginPage/')
 def secret(request):
     return render(request, 'secret.html')
+
+def about(request):
+    return render(request, 'about.html')

@@ -18,10 +18,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="./index.html">Home</a>
+                    <a class="nav-link" href="/home/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./about.html">About</a>
+                    <a class="nav-link" href="/about/">About</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
@@ -30,12 +30,12 @@
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdownMenu" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
                             <span id="userName">
-                                {{ user.username }}
-                                {% if user.is_student %}
+                                {{ user.username }} ({{user.groups.get}})
+                                <!-- {% if user.groups.name %}
                                     (student)
                                 {% elif user.is_faculty %}
                                     (faculty)
-                                {% endif %}
+                                {% endif %} -->
                             </span>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="userDropdownMenu">
