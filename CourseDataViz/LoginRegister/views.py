@@ -60,6 +60,8 @@ def secret(request):
 def about(request):
     return render(request, 'about.html')
 
+# add decorator to restrict access to this page only to faculty group
+@login_required(login_url='/getLoginPage/')
 def upload_data(request):
     if request.method == 'POST':
         yr = request.POST['year']
