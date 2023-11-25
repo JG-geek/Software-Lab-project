@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User,Group,auth
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+import csv, io
+from .models import courseData
 
 
 # Create your views here.
@@ -43,6 +45,8 @@ def register(request):
         return redirect('/login')
 
 def home(request):
+    user1 = User.objects.get(username="jay")
+    print(user1.email)
     return render(request,'home.html')
 
 def logout(request):
@@ -55,3 +59,27 @@ def secret(request):
 
 def about(request):
     return render(request, 'about.html')
+
+def upload_data(request):
+    if request.method == 'POST':
+        yr = request.POST['year']
+        sm = request.POST['semester']
+        csv_file = request.FILES.get('csvFile', False)
+        data = csv_file.read().decode('UTF-8')
+        string = io.StringIO(data)
+        next(string)
+        next(string)
+        reader = csv.reader(string)
+        for row in reader:
+            new_row = []
+            for x in row[1:]:
+                if x == '-':
+                    new_row.append(0)
+                else:
+                    new_row.append(int(x))
+            courseData.objects.create(course_code = row[0], year = yr, sem = sm, grade_AA=new_row[0], grade_AP=new_row[1], grade_AB=new_row[2], grade_BB=new_row[3], grade_BC=new_row[4], grade_CC=new_row[5], grade_CD=new_row[6], grade_DD=new_row[7], grade_AU=new_row[8], grade_DX=new_row[9], grade_FF=new_row[10], grade_FR=new_row[11], grade_II=new_row[12], grade_NP=new_row[13], grade_PP=new_row[14], grade_S=new_row[15], grade_XX=new_row[16], total=new_row[17])
+        messages.success(request, "File uploaded successfully")
+        return redirect('/home')        
+    else:
+        return render(request, 'upload.html')
+    

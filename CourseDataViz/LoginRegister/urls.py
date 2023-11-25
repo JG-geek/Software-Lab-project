@@ -9,4 +9,5 @@ urlpatterns = [
     path('home/', views.home, name="home"),
     path('about/', views.about, name="about"),
     path('secret/', views.secret, name="secret"),
+    path('upload_data/', views.upload_data, name="upload"),
 ]
