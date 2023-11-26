@@ -112,3 +112,48 @@ def courseWiseComparison(request):
         courseData_objects = courseData.objects.values_list(
             'course_code', flat=True).distinct().order_by('course_code')
         return render(request, 'courseWiseComparison.html', context={'courseData_objects': courseData_objects})
+
+
+def individualCourseStat(request):
+    if(request.method == "POST"):
+        course_code = request.POST['course_code']
+        semester = request.POST['semester']
+        year = request.POST['year']
+        courseData_objects = courseData.objects.filter(course_code=course_code, sem=semester, year=year)
+        if(courseData_objects.count() == 0):
+            messages.info(request, 'No data found for the given course code and semester')
+            return redirect('/plots/individualCourseStat/')
+        else:
+            grades = ['AA',
+                      'AP', 
+                      'AB', 
+                      'BB', 
+                      'BC', 
+                      'CC', 
+                      'CD', 
+                      'DD', 
+                      'AU', 
+                      'DX', 
+                      'FF', 
+                      'FR', 
+                      'II', 
+                      'NP', 
+                      'PP', 
+                      'S', 
+                      'XX' ]
+           
+            marks = []
+            for grade in grades:
+                gr = courseData_objects.values_list('grade_'+grade, flat=True)
+                marks.append(gr[0])
+
+            fig = go.Figure()
+            fig.add_trace(go.Bar(x=grades, y=marks, name="Total Students"))                    
+            fig.update_layout(title_text='Total Students vs Year', xaxis_title='Year', yaxis_title='Total Students')
+            fig = fig.to_html(full_html=False, default_height=500, default_width=700)
+            
+            return render(request, 'individualCourseStat.html', context={'line': fig})
+    else:
+        courseData_objects = courseData.objects.values_list(
+            'course_code', flat=True).distinct().order_by('course_code')
+        return render(request, 'individualCourseStat.html', context={'courseData_objects': courseData_objects})

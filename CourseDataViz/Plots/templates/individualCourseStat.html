@@ -2,30 +2,31 @@
 {% block content %}
 
 
-{% if not plot_div %}
+{% if not line %}
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    <h2 class="card-title text-center">Course Wise Comparision</h2>
-                    <form id="exampleForm" action="/plots/courseWiseComparison/" method="POST">
+                    <h2 class="card-title text-center">Individual Course Statistics</h2>
+                    <form id="exampleForm" action="/plots/individualCourseStat/" method="POST">
                         {% csrf_token %}
 
                         <div class="form-group">
                             <label for="course_code">Select Course</label>
-                            <select class="form-control" id="course_code1" name="course_code1">
+                            <select class="form-control" id="course_code" name="course_code">
                                 {% for i in courseData_objects %}
                                 <option value="{{ i }}">{{ i }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="course_code">Select Course</label>
-                            <select class="form-control" id="course_code2" name="course_code2">
-                                {% for i in courseData_objects %}
-                                <option value="{{ i }}">{{ i }}</option>
-                                {% endfor %}
+                            <label for="year">Year</label>
+                            <select class="form-control" id="year" name="year">
+                                <option value="2019">2019</option>
+                                <option value="2020">2020</option>
+                                <option value="2021">2021</option>
+                                <option value="2022">2022</option>
                             </select>
                         </div>
 
@@ -59,25 +60,7 @@
         <div class="col mx-auto mb-4">
             <div class="card">
                 <div class="card-body text-center">
-                {{ plot_div|safe }}
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col mx-auto">
-            <div class="card">
-                <div class="card-body text-center">
-                    {{ plot_div1|safe }}
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col mx-auto">
-            <div class="card">
-                <div class="card-body text-center">
-                    {{plot_div2|safe}}
+                    {{ line|safe }}
                 </div>
             </div>
         </div>
