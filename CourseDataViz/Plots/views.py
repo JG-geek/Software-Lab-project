@@ -36,3 +36,79 @@ def yearWiseComparison(request):
     else:
         courseData_objects = courseData.objects.values_list('course_code', flat=True).distinct().order_by('course_code')
         return render(request, 'yearWiseComparison.html', context={'courseData_objects': courseData_objects})
+    
+@login_required(login_url='/login/')
+def courseWiseComparison(request):
+    if(request.method == "POST"):
+        course_code1 = request.POST['course_code1']
+        course_code2 = request.POST['course_code2']
+        semester = request.POST['semester']
+        courseData_objects1 = courseData.objects.filter(
+            course_code=course_code1, sem=semester)
+        courseData_objects2 = courseData.objects.filter(
+            course_code=course_code2, sem=semester)
+        if(courseData_objects1.count() == 0 or courseData_objects2.count() == 0):
+            messages.info(request, 'No data found for the given course code')
+            return redirect('/plots/courseWiseComparison/')
+        else:
+            fig = go.Figure()
+            fig1 = go.Figure()
+            fig2 = go.Figure()
+
+            fig.add_trace(go.Scatter(x=list(courseData_objects1.values_list('year', flat=True)), y=list(
+                courseData_objects1.values_list('total', flat=True)), mode='lines+markers', name=course_code1))
+            fig.add_trace(go.Scatter(x=list(courseData_objects2.values_list('year', flat=True)), y=list(
+                courseData_objects2.values_list('total', flat=True)), mode='lines+markers', name=course_code2))
+            fig.update_layout(title_text='Total Students vs Year',
+                              xaxis_title='Year', yaxis_title='Total Students')
+            fig = fig.to_html(
+                full_html=False, default_height=500, default_width=700)
+
+            course1_gradeAA = list(
+                courseData_objects1.values_list('grade_AA', flat=True))
+            course1_gradeBB = list(
+                courseData_objects1.values_list('grade_BB', flat=True))
+            course1_gradeCC = list(
+                courseData_objects1.values_list('grade_CC', flat=True))
+            course1_gradeDD = list(
+                courseData_objects1.values_list('grade_DD', flat=True))
+            fig1.add_trace(go.Bar(x=list(courseData_objects1.values_list(
+                'year', flat=True)), y=course1_gradeAA, name='AA', marker_color='green'))
+            fig1.add_trace(go.Bar(x=list(courseData_objects1.values_list(
+                'year', flat=True)), y=course1_gradeBB, name='BB', marker_color='red'))
+            fig1.add_trace(go.Bar(x=list(courseData_objects1.values_list(
+                'year', flat=True)), y=course1_gradeCC, name='CC', marker_color='blue'))
+            fig1.add_trace(go.Bar(x=list(courseData_objects1.values_list(
+                'year', flat=True)), y=course1_gradeDD, name='DD', marker_color='yellow'))
+            fig1.update_layout(barmode='stack', title_text='Total Students vs Year',
+                               xaxis_title='Year', yaxis_title='grades')
+            fig1 = fig1.to_html(
+                full_html=False, default_height=500, default_width=700)
+
+            course2_gradeAA = list(
+                courseData_objects2.values_list('grade_AA', flat=True))
+            course2_gradeBB = list(
+                courseData_objects2.values_list('grade_BB', flat=True))
+            course2_gradeCC = list(
+                courseData_objects2.values_list('grade_CC', flat=True))
+            course2_gradeDD = list(
+                courseData_objects2.values_list('grade_DD', flat=True))
+            fig2.add_trace(go.Bar(x=list(courseData_objects2.values_list(
+                'year', flat=True)), y=course2_gradeAA, name='AA', marker_color='green'))
+            fig2.add_trace(go.Bar(x=list(courseData_objects2.values_list(
+                'year', flat=True)), y=course2_gradeBB, name='BB', marker_color='red'))
+            fig2.add_trace(go.Bar(x=list(courseData_objects2.values_list(
+                'year', flat=True)), y=course2_gradeCC, name='CC', marker_color='blue'))
+            fig2.add_trace(go.Bar(x=list(courseData_objects2.values_list(
+                'year', flat=True)), y=course2_gradeDD, name='DD', marker_color='yellow'))
+            fig2.update_layout(barmode='stack', title_text='Total Students vs Year',
+                               xaxis_title='Year', yaxis_title='grades')
+            fig2 = fig2.to_html(
+                full_html=False, default_height=500, default_width=700)
+
+            return render(request, 'courseWiseComparison.html', context={'plot_div': fig, 'plot_div1': fig1, 'plot_div2': fig2})
+
+    else:
+        courseData_objects = courseData.objects.values_list(
+            'course_code', flat=True).distinct().order_by('course_code')
+        return render(request, 'courseWiseComparison.html', context={'courseData_objects': courseData_objects})
