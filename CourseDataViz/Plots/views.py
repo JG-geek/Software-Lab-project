@@ -16,7 +16,7 @@ def yearWiseComparison(request):
             return redirect('/plots/yearWiseComparison/')
         else:    
             line = go.Figure()
-            line.add_trace(go.Scatter(x=list(courseData_objects.values_list('year', flat=True)), y=list(courseData_objects.values_list('total', flat=True)), mode='lines+markers', name="Total Students"))                    
+            line.add_trace(go.Scatter(x=list(courseData_objects.values_list('year', flat=True)), y=list(courseData_objects.values_list('total', flat=True)), mode='lines+markers', name=course_code))                    
             line.update_layout(title_text='Total Students vs Year', xaxis_title='Year', yaxis_title='Total Students')
             line = line.to_html(full_html=False, default_height=500, default_width=700)
 
@@ -149,10 +149,15 @@ def individualCourseStat(request):
 
             fig = go.Figure()
             fig.add_trace(go.Bar(x=grades, y=marks, name="Total Students"))                    
-            fig.update_layout(title_text='Total Students vs Year', xaxis_title='Year', yaxis_title='Total Students')
+            fig.update_layout(title_text='Students vs Grade', xaxis_title='Grades', yaxis_title='Students')
             fig = fig.to_html(full_html=False, default_height=500, default_width=700)
             
-            return render(request, 'individualCourseStat.html', context={'line': fig})
+            pie = go.Figure()
+            pie.add_trace(go.Pie(labels=grades, values=marks))
+            pie.update_layout(title_text='Grade Distribution')
+            pie = pie.to_html(full_html=False, default_height=500, default_width=700)
+
+            return render(request, 'individualCourseStat.html', context={'line': fig, 'pie': pie})
     else:
         courseData_objects = courseData.objects.values_list(
             'course_code', flat=True).distinct().order_by('course_code')
