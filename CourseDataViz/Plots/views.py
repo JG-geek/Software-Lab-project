@@ -80,7 +80,7 @@ def courseWiseComparison(request):
                 'year', flat=True)), y=course1_gradeCC, name='CC', marker_color='blue'))
             fig1.add_trace(go.Bar(x=list(courseData_objects1.values_list(
                 'year', flat=True)), y=course1_gradeDD, name='DD', marker_color='yellow'))
-            fig1.update_layout(barmode='stack', title_text='Total Students vs Year',
+            fig1.update_layout(barmode='stack', title_text='Student grades vs Year '+course_code1,
                                xaxis_title='Year', yaxis_title='grades')
             fig1 = fig1.to_html(
                 full_html=False, default_height=500, default_width=700)
@@ -101,7 +101,7 @@ def courseWiseComparison(request):
                 'year', flat=True)), y=course2_gradeCC, name='CC', marker_color='blue'))
             fig2.add_trace(go.Bar(x=list(courseData_objects2.values_list(
                 'year', flat=True)), y=course2_gradeDD, name='DD', marker_color='yellow'))
-            fig2.update_layout(barmode='stack', title_text='Total Students vs Year',
+            fig2.update_layout(barmode='stack', title_text='Student grades vs Year '+course_code2,
                                xaxis_title='Year', yaxis_title='grades')
             fig2 = fig2.to_html(
                 full_html=False, default_height=500, default_width=700)

@@ -83,5 +83,10 @@ def upload_data(request):
         messages.success(request, "File uploaded successfully")
         return redirect('/home')        
     else:
-        return render(request, 'upload.html')
+        group = request.user.groups.get()
+        if group.name == 'faculty':
+            return render(request, 'upload.html')
+        else:
+            messages.error(request, "You are not authorized to access this page")
+            return redirect('/home')
     
